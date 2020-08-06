@@ -51,4 +51,41 @@ router.post('/', (req, res) => {
     res.redirect('/dinosaurs')   
 })
 
+//get the update form
+router.get('/edit/:id', (req, res) => {
+    let dinosaurs = fs.readFileSync('./dinosaurs.json')
+    let dinoData = JSON.parse(dinosaurs)
+    res.render('dinosaurs/edit', {dino: dinoData[req.params.id], dinoId: req.params.id})
+})
+
+//put route for updating dino information
+router.put('/:id', (req, res) => {
+    let dinosaurs = fs.readFileSync('./dinosaurs.json')
+    dinosaurs = JSON.parse(dinosaurs)
+
+    //update the info
+    //re-assigning the name and type fields of the dinosaurs
+    dinosaurs[req.params.id].name = req.body.name
+    dinosaurs[req.params.id].type = req.body.type
+
+    //save the edited dinosaurs information
+    fs.writeFileSync('./dinosaurs.json', JSON.stringify(dinosaurs))
+    res.redirect('/dinosaurs')
+})
+
+//show route [uses URL parameter 'url']
+router.delete('/:id', (req, res) => {
+    let dinosaurs = fs.readFileSync('./dinosaurs.json')
+    dinosaurs = JSON.parse(dinosaurs)
+
+    //delete the dinosaur from the json file
+    //use splice method to delete it from the array that's saved in the variable dinosaurs
+    dinosaurs.splice(req.params.id, 1)
+
+    //save the dinosaurs back into the JSON file
+    fs.writeFileSync('./dinosaurs.json', JSON.stringify(dinosaurs))
+
+    res.redirect('/dinosaurs');
+})
+
 module.exports = router;
